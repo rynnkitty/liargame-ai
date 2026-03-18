@@ -17,6 +17,7 @@ export function useSocket() {
     setMyKeyword,
     setMyCategory,
     setPhaseTimer,
+    setTurnOrder,
     addMessage,
     addDescription,
   } = useGameStore();
@@ -31,11 +32,13 @@ export function useSocket() {
 
     const onPhaseChange: ServerToClientEvents['game:phase_change'] = ({
       phase,
+      turnOrder,
       phaseStartAt,
       durationSec,
     }) => {
       setPhase(phase);
       setPhaseTimer(phaseStartAt, durationSec);
+      if (turnOrder) setTurnOrder(turnOrder);
     };
 
     const onRoleAssigned: ServerToClientEvents['game:role_assigned'] = ({

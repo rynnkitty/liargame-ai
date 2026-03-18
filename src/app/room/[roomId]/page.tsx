@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSocket } from '@/hooks/useSocket';
 import { useRoom } from '@/hooks/useRoom';
 import { useGame } from '@/hooks/useGame';
-import { useGameStore } from '@/store/game-store';
 import { toast } from '@/hooks/use-toast';
 
 // 게임 단계 컴포넌트
@@ -176,15 +175,6 @@ export default function RoomPage() {
 
   const socket = useSocket();
   const { room, phase } = useRoom();
-  const { setMyPlayerId } = useGameStore();
-
-  // myPlayerId = socket.id
-  useEffect(() => {
-    const onConnect = () => setMyPlayerId(socket.id ?? '');
-    if (socket.connected) setMyPlayerId(socket.id ?? '');
-    socket.on('connect', onConnect);
-    return () => { socket.off('connect', onConnect); };
-  }, [socket, setMyPlayerId]);
 
   // 잘못된 방 URL이면 홈으로
   useEffect(() => {

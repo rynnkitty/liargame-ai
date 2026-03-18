@@ -27,6 +27,7 @@ interface GameStore {
   setMyKeyword: (keyword: string | null) => void;
   setMyCategory: (category: string) => void;
   setPhaseTimer: (phaseStartAt: number, phaseDurationSec: number) => void;
+  setTurnOrder: (turnOrder: string[]) => void;
   addMessage: (message: Message) => void;
   addDescription: (description: Description) => void;
   reset: () => void;
@@ -53,6 +54,11 @@ export const useGameStore = create<GameStore>((set) => ({
   setMyKeyword: (myKeyword) => set({ myKeyword }),
   setMyCategory: (myCategory) => set({ myCategory }),
   setPhaseTimer: (phaseStartAt, phaseDurationSec) => set({ phaseStartAt, phaseDurationSec }),
+  setTurnOrder: (turnOrder) =>
+    set((state) => {
+      if (!state.room) return state;
+      return { room: { ...state.room, turnOrder, currentTurnIndex: 0 } };
+    }),
   addMessage: (message) =>
     set((state) => {
       if (!state.room) return state;
