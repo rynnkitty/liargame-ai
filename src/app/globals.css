@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Velvet Noir — dark-first design for a game app */
+    --background: 231 47% 5%;
+    --foreground: 220 30% 94%;
+
+    --card: 231 40% 8%;
+    --card-foreground: 220 30% 94%;
+
+    --popover: 231 35% 10%;
+    --popover-foreground: 220 30% 94%;
+
+    /* Primary: amber gold */
+    --primary: 38 95% 53%;
+    --primary-foreground: 231 47% 5%;
+
+    /* Secondary: violet */
+    --secondary: 265 55% 45%;
+    --secondary-foreground: 220 30% 94%;
+
+    --muted: 231 30% 12%;
+    --muted-foreground: 220 15% 50%;
+
+    --accent: 265 55% 45%;
+    --accent-foreground: 220 30% 94%;
+
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 220 30% 94%;
+
+    --border: 231 28% 15%;
+    --input: 231 30% 11%;
+    --ring: 38 95% 53%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Noise texture overlay */
+.noise-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow animation */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px hsl(38 95% 53% / 0.15); }
+  50% { box-shadow: 0 0 40px hsl(38 95% 53% / 0.3); }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.4s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.glow-primary {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
