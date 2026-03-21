@@ -6,9 +6,11 @@ import Timer from './Timer';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
+import { getCategoryLabel } from '@/constants/categories';
 
 export default function RoleReveal() {
   const { myRole, myKeyword, myCategory } = useGameStore();
+  const categoryLabel = myCategory ? getCategoryLabel(myCategory) : '';
   const { remaining } = useTimer();
   const isLiar = myRole === 'liar';
 
@@ -46,7 +48,7 @@ export default function RoleReveal() {
 
         <h2
           className={cn(
-            'font-display text-3xl font-bold mb-4',
+            'text-2xl font-semibold mb-4',
             isLiar ? 'text-red-300' : 'text-primary',
           )}
         >
@@ -61,7 +63,7 @@ export default function RoleReveal() {
             </div>
             <p className="text-xs text-muted-foreground/70">
               카테고리:{' '}
-              <span className="font-semibold text-muted-foreground">{myCategory}</span>
+              <span className="font-semibold text-muted-foreground">{categoryLabel}</span>
             </p>
             <p className="text-xs text-red-400/70">
               다른 플레이어들의 설명을 분석해 키워드를 추측하세요
@@ -71,11 +73,11 @@ export default function RoleReveal() {
           <div className="space-y-3">
             <div className="flex items-center justify-center gap-2 text-muted-foreground">
               <Eye className="w-4 h-4" />
-              <span className="text-sm">카테고리: {myCategory}</span>
+              <span className="text-sm">카테고리: {categoryLabel}</span>
             </div>
             <div className="rounded-xl bg-primary/10 border border-primary/20 px-4 py-3">
               <p className="text-xs text-muted-foreground mb-1">키워드</p>
-              <p className="font-display text-2xl font-bold text-primary">{myKeyword}</p>
+              <p className="text-2xl font-semibold text-primary tracking-wide">{myKeyword}</p>
             </div>
             <p className="text-xs text-muted-foreground/70">
               키워드를 직접 말하지 말고 간접적으로 설명하세요

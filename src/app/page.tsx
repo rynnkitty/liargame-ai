@@ -164,7 +164,7 @@ export default function HomePage() {
             <span>링크로 초대</span>
           </div>
 
-          <p className="text-[10px] text-muted-foreground/30">사내 해커톤 2026 · LiarGame AI</p>
+          <a href="https://kimkitty.net" target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors">KimKitty.NET 2026 · LiarGame AI</a>
         </div>
       </div>
     </main>

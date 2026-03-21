@@ -36,7 +36,7 @@ export interface ClientToServerEvents {
 
   // 호스트 전용
   'room:start': (
-    payload: { roomId: string },
+    payload: { roomId: string; apiKey?: string },
     callback: SocketCallback<void>
   ) => void;
   'room:add_ai': (

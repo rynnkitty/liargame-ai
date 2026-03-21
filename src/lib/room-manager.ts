@@ -17,9 +17,10 @@ function defaultSettings(): GameSettings {
     category: '',
     maxPlayers: MAX_PLAYERS,
     descriptionTimerSec: 60,
-    discussionTimerSec: 180,
+    discussionTimerSec: 60,
     voteTimerSec: 30,
     finalDefenseTimerSec: 30,
+    useAIKeywords: true,
   };
 }
 

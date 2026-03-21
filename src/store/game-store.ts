@@ -30,6 +30,7 @@ interface GameStore {
   setTurnOrder: (turnOrder: string[]) => void;
   addMessage: (message: Message) => void;
   addDescription: (description: Description) => void;
+  setGameResult: (result: import('@/types/game').GameResult) => void;
   reset: () => void;
 }
 
@@ -79,6 +80,11 @@ export const useGameStore = create<GameStore>((set) => ({
           currentTurnIndex: state.room.currentTurnIndex + 1,
         },
       };
+    }),
+  setGameResult: (result) =>
+    set((state) => {
+      if (!state.room) return state;
+      return { room: { ...state.room, gameResult: result, phase: 'result' }, phase: 'result' };
     }),
   reset: () => set(initialState),
 }));

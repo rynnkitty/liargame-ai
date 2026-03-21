@@ -22,6 +22,8 @@ import {
   generateAIVote,
   generateAIFinalAnswer,
 } from '@/lib/ai/local-ai';
+import { claudeKeywords, claudeCategoryAndKeywords } from '@/lib/ai/claude-ai';
+import { getCategoryLabel } from '@/constants/categories';
 import { generateId } from '@/lib/utils';
 
 // ── 타입 별칭 ────────────────────────────────────────────────────────────────
@@ -641,7 +643,7 @@ export function initSocketServer(io: TypedIO): void {
     });
 
     // ── room:start ───────────────────────────────────────────────────────────
-    socket.on('room:start', ({ roomId }, callback) => {
+    socket.on('room:start', async ({ roomId, apiKey }, callback) => {
       try {
         const room = getRoom(roomId);
         if (!room) { callback({ ok: false, error: '방을 찾을 수 없습니다.' }); return; }
@@ -654,8 +656,12 @@ export function initSocketServer(io: TypedIO): void {
         if (room.players.length < 2) {
           callback({ ok: false, error: '최소 2명이 필요합니다.' }); return;
         }
+        const isAISuggestCategory = room.settings.category === 'ai_suggest';
         if (!room.settings.category) {
           callback({ ok: false, error: '카테고리를 선택해 주세요.' }); return;
+        }
+        if (isAISuggestCategory && !room.settings.useAIKeywords) {
+          callback({ ok: false, error: 'AI 추천 카테고리는 AI 키워드 기능이 필요합니다.' }); return;
         }
 
         // 역할 배정
@@ -663,8 +669,45 @@ export function initSocketServer(io: TypedIO): void {
         room.players = assigned as Player[];
         room.liarId = assigned.find((p) => p.role === 'liar')!.id;
 
-        // 키워드 선택
-        const { keyword, foolKeyword } = selectKeyword(room.settings.category, room.settings.mode);
+        // 키워드 선택 (AI 또는 내장)
+        let keyword: string;
+        let foolKeyword: string | undefined;
+
+        const effectiveApiKey = apiKey || process.env.ANTHROPIC_API_KEY;
+        if (room.settings.useAIKeywords && effectiveApiKey) {
+          try {
+            const count = room.settings.mode === 'fool' ? 2 : 1;
+            if (isAISuggestCategory) {
+              // AI가 카테고리와 키워드를 함께 생성
+              const result = await claudeCategoryAndKeywords(count, effectiveApiKey);
+              room.settings.category = result.categoryId;
+              keyword = result.keywords[0];
+              if (room.settings.mode === 'fool' && result.keywords.length >= 2) {
+                foolKeyword = result.keywords[1];
+              }
+            } else {
+              const result = await claudeKeywords(getCategoryLabel(room.settings.category), count, effectiveApiKey);
+              keyword = result.keywords[0];
+              if (room.settings.mode === 'fool' && result.keywords.length >= 2) {
+                foolKeyword = result.keywords[1];
+              }
+            }
+          } catch {
+            // AI 실패 시 내장 키워드로 폴백 (ai_suggest면 랜덤 카테고리 선택)
+            if (isAISuggestCategory) {
+              const { CATEGORIES: CATS } = await import('@/constants/categories');
+              room.settings.category = CATS[Math.floor(Math.random() * CATS.length)].id;
+            }
+            const fallback = selectKeyword(room.settings.category, room.settings.mode);
+            keyword = fallback.keyword;
+            foolKeyword = fallback.foolKeyword;
+          }
+        } else {
+          const result = selectKeyword(room.settings.category, room.settings.mode);
+          keyword = result.keyword;
+          foolKeyword = result.foolKeyword;
+        }
+
         room.settings.keyword = keyword;
         if (foolKeyword) foolKeywords.set(room.id, foolKeyword);
 

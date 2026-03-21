@@ -20,6 +20,7 @@ export function useSocket() {
     setTurnOrder,
     addMessage,
     addDescription,
+    setGameResult,
   } = useGameStore();
 
   useEffect(() => {
@@ -61,6 +62,10 @@ export function useSocket() {
       addMessage(message);
     };
 
+    const onGameResult: ServerToClientEvents['game:result'] = ({ result }) => {
+      setGameResult(result);
+    };
+
     const onError: ServerToClientEvents['error'] = ({ message }) => {
       toast({ variant: 'destructive', title: '오류', description: message });
     };
@@ -76,6 +81,7 @@ export function useSocket() {
     socket.on('game:role_assigned', onRoleAssigned);
     socket.on('game:description_submitted', onDescriptionSubmitted);
     socket.on('game:message_received', onMessageReceived);
+    socket.on('game:result', onGameResult);
     socket.on('error', onError);
     socket.on('notification', onNotification);
 
@@ -89,6 +95,7 @@ export function useSocket() {
       socket.off('game:role_assigned', onRoleAssigned);
       socket.off('game:description_submitted', onDescriptionSubmitted);
       socket.off('game:message_received', onMessageReceived);
+      socket.off('game:result', onGameResult);
       socket.off('error', onError);
       socket.off('notification', onNotification);
       initialized.current = false;

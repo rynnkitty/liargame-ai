@@ -6,10 +6,12 @@
  */
 import Anthropic from '@anthropic-ai/sdk';
 import { PROMPTS } from './prompts';
+import { CATEGORIES, getCategoryIdByLabel } from '@/constants/categories';
 import type { AIContext, AIDescribeResponse, AIDiscussResponse, AIVoteResponse, AIFinalDefenseResponse, AIAnalyzeResponse, AIKeywordsResponse } from '@/types/ai';
 import type { Description, GameResult, Message } from '@/types/game';
 
 const TIMEOUT_MS = 5_000;
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? 'claude-haiku-4-5';
 
 function makeClient(apiKey: string): Anthropic {
   return new Anthropic({ apiKey, timeout: TIMEOUT_MS });
@@ -17,7 +19,7 @@ function makeClient(apiKey: string): Anthropic {
 
 async function callClaude(client: Anthropic, prompt: string): Promise<string> {
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5',
+    model: CLAUDE_MODEL,
     max_tokens: 256,
     messages: [{ role: 'user', content: prompt }],
   });
@@ -157,7 +159,7 @@ export async function claudeAnalyze(
 
   // 분석은 응답이 길 수 있으므로 max_tokens를 늘림
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5',
+    model: CLAUDE_MODEL,
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }],
   });
@@ -216,4 +218,37 @@ export async function claudeKeywords(
   if (keywords.length === 0) throw new Error('Claude returned no keywords');
 
   return { type: 'keywords', keywords, usedClaude: true };
+}
+
+// ─── categoryAndKeywords ───────────────────────────────────────────────────────
+
+/** AI가 카테고리를 선택하고 키워드까지 함께 생성 */
+export async function claudeCategoryAndKeywords(
+  count: number,
+  apiKey: string,
+): Promise<{ categoryId: string; categoryLabel: string; keywords: string[] }> {
+  const client = makeClient(apiKey);
+  const availableLabels = CATEGORIES.map((c) => c.label);
+  const prompt = PROMPTS.categoryAndKeywords(availableLabels, count);
+  const raw = await callClaude(client, prompt);
+
+  // 형식: "카테고리명|키워드1,키워드2"
+  const pipeIdx = raw.indexOf('|');
+  if (pipeIdx === -1) throw new Error('Claude returned invalid category format');
+
+  const categoryLabel = raw.slice(0, pipeIdx).trim();
+  const keywordPart = raw.slice(pipeIdx + 1).trim();
+
+  const categoryId = getCategoryIdByLabel(categoryLabel);
+  if (!categoryId) throw new Error(`Unknown category label: ${categoryLabel}`);
+
+  const keywords = keywordPart
+    .split(/[,，、]/)
+    .map((k) => k.trim().replace(/^["'"']|["'"']$/g, ''))
+    .filter(Boolean)
+    .slice(0, count);
+
+  if (keywords.length === 0) throw new Error('Claude returned no keywords');
+
+  return { categoryId, categoryLabel, keywords };
 }

@@ -40,7 +40,7 @@ export default function DescriptionPhase() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold">설명 단계</h2>
+          <h2 className="text-lg font-semibold">설명 단계</h2>
           <p className="text-xs text-muted-foreground">
             {completedCount} / {totalCount} 완료
           </p>

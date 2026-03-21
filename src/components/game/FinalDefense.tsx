@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Send, Loader2 } from 'lucide-react';
+import { getCategoryLabel } from '@/constants/categories';
 
 export default function FinalDefense() {
   const { room } = useRoom();
   const { myRole, myCategory } = useGameStore();
+  const categoryLabel = myCategory ? getCategoryLabel(myCategory) : '';
   const { submitFinalDefense } = useGame();
   const [input, setInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,12 +53,12 @@ export default function FinalDefense() {
 
         {isLiar ? (
           <>
-            <h2 className="font-display text-2xl font-bold text-red-300 mb-2">
+            <h2 className="text-xl font-semibold text-red-300 mb-2">
               라이어 최후의 기회!
             </h2>
             <p className="text-sm text-muted-foreground mb-1">
               카테고리:{' '}
-              <span className="font-semibold text-foreground">{myCategory}</span>
+              <span className="font-semibold text-foreground">{categoryLabel}</span>
             </p>
             <p className="text-sm text-red-400/80 mb-6">
               키워드를 맞추면 역전승할 수 있습니다
@@ -90,7 +92,7 @@ export default function FinalDefense() {
           </>
         ) : (
           <>
-            <h2 className="font-display text-2xl font-bold mb-2">
+            <h2 className="text-xl font-semibold mb-2">
               {liar?.name ?? '라이어'}의 최후 변론
             </h2>
             <p className="text-sm text-muted-foreground">

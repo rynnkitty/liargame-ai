@@ -26,7 +26,7 @@ import RoomCodeShare from '@/components/lobby/RoomCodeShare';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Play } from 'lucide-react';
+import { Loader2, Play, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Phase, GameSettings as GameSettingsType } from '@/types/game';
 
@@ -210,6 +210,16 @@ export default function RoomPage() {
         <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border/50">
           <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="gap-1.5 text-muted-foreground hover:text-foreground h-8 px-2"
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span className="text-xs">홈</span>
+              </Button>
+              <span className="text-muted-foreground/40 text-xs">|</span>
               <span className="text-lg" aria-hidden>🎭</span>
               <span className="font-display font-bold text-sm">LiarGame AI</span>
             </div>

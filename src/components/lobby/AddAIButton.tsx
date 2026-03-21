@@ -27,7 +27,7 @@ export default function AddAIButton({
   const { apiKey } = useSettingsStore();
   const [expanded, setExpanded] = useState(false);
 
-  const hasClaudeKey = apiKey.length > 0;
+  const hasClaudeKey = apiKey.length > 0 || process.env.NEXT_PUBLIC_HAS_CLAUDE === 'true';
   const canAdd = currentAICount < maxAIPlayers && totalPlayers < maxPlayers;
 
   if (!canAdd) {

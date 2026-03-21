@@ -36,7 +36,7 @@ export default function DiscussionPhase() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold">토론 단계</h2>
+          <h2 className="text-lg font-semibold">토론 단계</h2>
           <p className="text-xs text-muted-foreground">라이어를 찾아보세요</p>
         </div>
         <Timer size="md" />
@@ -55,6 +55,30 @@ export default function DiscussionPhase() {
           {myRole === 'citizen'
             ? `🔑 키워드: ${myKeyword} — 라이어의 의심스러운 설명을 찾아보세요`
             : '🎭 라이어 — 자연스럽게 대화하며 의심을 피하세요'}
+        </div>
+      )}
+
+      {/* 설명 요약 */}
+      {room.descriptions.length > 0 && (
+        <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">설명 단계 요약</p>
+          <div className="space-y-1.5">
+            {room.turnOrder.map((playerId) => {
+              const desc = room.descriptions.find((d) => d.playerId === playerId);
+              const player = room.players.find((p) => p.id === playerId);
+              if (!player) return null;
+              return (
+                <div key={playerId} className="flex gap-2 items-start text-sm">
+                  <span className="font-medium text-foreground/70 shrink-0 w-16 truncate">
+                    {player.name}
+                  </span>
+                  <span className="text-foreground/90">
+                    {desc ? desc.text : <span className="italic text-muted-foreground">설명 없음</span>}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

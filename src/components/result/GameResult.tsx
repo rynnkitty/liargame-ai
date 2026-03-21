@@ -41,7 +41,7 @@ export default function GameResult() {
         <div className="text-6xl mb-3">{info.emoji}</div>
         <h2
           className={cn(
-            'font-display text-3xl font-bold mb-1',
+            'text-2xl font-semibold mb-1',
             isMyWin ? 'text-amber-300' : 'text-muted-foreground',
           )}
         >
@@ -58,7 +58,7 @@ export default function GameResult() {
         style={{ animationDelay: '60ms' }}
       >
         <p className="text-xs text-muted-foreground mb-1">이번 게임의 키워드</p>
-        <p className="font-display text-3xl font-bold text-primary">{result.keyword}</p>
+        <p className="text-2xl font-semibold text-primary tracking-wide">{result.keyword}</p>
         {result.liarGuessedKeyword && (
           <p className="text-xs text-muted-foreground mt-2">
             라이어의 추측:{' '}

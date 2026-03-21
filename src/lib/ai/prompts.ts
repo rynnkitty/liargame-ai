@@ -154,4 +154,20 @@ ${messages.slice(0, 20).map((m) => `${m.playerName}: ${m.text}`).join('\n')}
 키워드를 쉼표로 구분하여 한 줄로 답하세요. 예: "피자, 치킨, 라면"
 
 키워드:`.trim(),
+
+  categoryAndKeywords: (availableCategories: string[], count: number) => `
+라이어게임에 사용할 카테고리와 키워드를 추천해 주세요.
+
+선택 가능한 카테고리: ${availableCategories.join(', ')}
+
+규칙:
+- 위 카테고리 중 하나를 랜덤으로 선택하세요.
+- 선택한 카테고리에서 키워드 ${count}개를 생성하세요.
+- 한국 사람이라면 누구나 알 수 있는 2~6자 명사여야 합니다.
+- 중복 없이 ${count}개를 작성하세요.
+
+다음 형식으로만 답하세요: 카테고리명|키워드1,키워드2
+예: 음식|피자,치킨
+
+답변:`.trim(),
 };

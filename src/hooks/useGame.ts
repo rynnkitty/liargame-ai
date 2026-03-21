@@ -2,11 +2,13 @@
 
 import { getSocket } from '@/lib/socket/client';
 import { useGameStore } from '@/store/game-store';
+import { useSettingsStore } from '@/store/settings-store';
 import { toast } from '@/hooks/use-toast';
 
 export function useGame() {
   const { room } = useGameStore();
   const socket = getSocket();
+  const apiKey = useSettingsStore((s) => s.apiKey);
 
   const submitDescription = (text: string, onSuccess?: () => void) => {
     if (!room) return;
@@ -57,7 +59,7 @@ export function useGame() {
 
   const startGame = (onError?: (msg: string) => void) => {
     if (!room) return;
-    socket.emit('room:start', { roomId: room.id }, (res) => {
+    socket.emit('room:start', { roomId: room.id, apiKey: apiKey || undefined }, (res) => {
       if (!res.ok) {
         onError?.(res.error);
         toast({ variant: 'destructive', title: '게임 시작 실패', description: res.error });

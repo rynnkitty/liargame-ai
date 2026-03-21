@@ -42,7 +42,7 @@ const BodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const apiKey = req.headers.get('x-api-key');
+  const apiKey = process.env.ANTHROPIC_API_KEY || req.headers.get('x-api-key') || undefined;
   if (!apiKey) {
     return NextResponse.json({ error: 'API key required', code: 'INVALID_INPUT' }, { status: 400 });
   }

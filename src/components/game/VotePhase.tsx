@@ -37,7 +37,7 @@ export default function VotePhase() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold">투표 단계</h2>
+          <h2 className="text-lg font-semibold">투표 단계</h2>
           <p className="text-xs text-muted-foreground">
             {totalVotes} / {totalPlayers} 투표 완료
           </p>

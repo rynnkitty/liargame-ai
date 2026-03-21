@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -13,9 +13,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { GameSettings as GameSettingsType } from '@/types/game';
-import { CATEGORIES } from '@/constants/categories';
-import { Settings, Timer, Tag, Gamepad2, ChevronDown, ChevronUp } from 'lucide-react';
+import { CATEGORIES, AI_SUGGEST_CATEGORY } from '@/constants/categories';
+import { Settings, Timer, Tag, Gamepad2, ChevronDown, ChevronUp, Wand2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSettingsStore } from '@/store/settings-store';
 
 interface GameSettingsProps {
   settings: GameSettingsType;
@@ -40,11 +41,40 @@ const DESCRIPTION_TIMER_OPTIONS = [
 
 export default function GameSettings({ settings, onUpdate, isHost }: GameSettingsProps) {
   const [expanded, setExpanded] = useState(false);
+  const apiKey = useSettingsStore((s) => s.apiKey);
+  const hasApiKey = !!apiKey || process.env.NEXT_PUBLIC_HAS_CLAUDE === 'true';
 
-  const currentCategory = CATEGORIES.find((c) => c.id === settings.category);
+  const allCategories = hasApiKey && settings.useAIKeywords
+    ? [AI_SUGGEST_CATEGORY, ...CATEGORIES]
+    : CATEGORIES;
+  const currentCategory =
+    settings.category === AI_SUGGEST_CATEGORY.id
+      ? AI_SUGGEST_CATEGORY
+      : CATEGORIES.find((c) => c.id === settings.category);
+
+  // AI 활성화 상태일 때 카테고리 기본값을 AI 추천으로 설정
+  useEffect(() => {
+    if (!isHost) return;
+    if (hasApiKey && settings.useAIKeywords && !settings.category) {
+      onUpdate({ category: AI_SUGGEST_CATEGORY.id });
+    }
+  }, [hasApiKey, settings.useAIKeywords, settings.category, isHost]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCategoryChange = (value: string) => {
     onUpdate({ category: value });
+  };
+
+  const handleAIKeywordsChange = (checked: boolean) => {
+    if (!isHost) return;
+    if (!checked && settings.category === AI_SUGGEST_CATEGORY.id) {
+      // AI 키워드 끌 때 ai_suggest 카테고리도 초기화
+      onUpdate({ useAIKeywords: checked, category: '' });
+    } else if (checked && hasApiKey) {
+      // AI 키워드 켤 때 카테고리를 AI 추천으로 설정
+      onUpdate({ useAIKeywords: checked, category: AI_SUGGEST_CATEGORY.id });
+    } else {
+      onUpdate({ useAIKeywords: checked });
+    }
   };
 
   return (
@@ -139,16 +169,42 @@ export default function GameSettings({ settings, onUpdate, isHost }: GameSetting
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((cat) => (
+                {allCategories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id}>
                     <span className="flex items-center gap-2">
                       <span>{cat.emoji}</span>
                       <span>{cat.label}</span>
+                      {cat.id === AI_SUGGEST_CATEGORY.id && (
+                        <span className="text-[10px] text-muted-foreground">(게임 시작 시 결정)</span>
+                      )}
                     </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* AI 키워드 */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5 text-xs uppercase tracking-wide">
+              <Wand2 className="h-3.5 w-3.5" />
+              AI 키워드
+            </Label>
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium">AI가 키워드 생성</p>
+                <p className="text-xs text-muted-foreground">
+                  {hasApiKey
+                    ? '매 판 AI가 새 키워드를 제안합니다'
+                    : 'API 키를 등록하면 활성화됩니다'}
+                </p>
+              </div>
+              <Switch
+                checked={settings.useAIKeywords && hasApiKey}
+                onCheckedChange={handleAIKeywordsChange}
+                disabled={!isHost || !hasApiKey}
+              />
+            </div>
           </div>
 
           {/* 타이머 설정 */}

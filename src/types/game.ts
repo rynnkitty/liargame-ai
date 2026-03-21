@@ -61,9 +61,10 @@ export interface GameSettings {
   keyword?: string;      // 서버에서 선택 (클라이언트에는 역할 확인 후 노출)
   maxPlayers: number;
   descriptionTimerSec: number;   // 기본 60
-  discussionTimerSec: number;    // 기본 180
+  discussionTimerSec: number;    // 기본 60
   voteTimerSec: number;          // 기본 30
   finalDefenseTimerSec: number;  // 기본 30
+  useAIKeywords: boolean;        // AI가 키워드를 생성할지 여부 (기본 true, API 키 필요)
 }
 
 export interface Room {
