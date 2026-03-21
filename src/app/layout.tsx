@@ -22,6 +22,10 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: 'LiarGame AI',
   description: 'AI가 실제 플레이어로 참여하는 실시간 멀티플레이어 라이어게임',
+  icons: {
+    icon: '/kitty-logo.png',
+    apple: '/kitty-logo.png',
+  },
   openGraph: {
     title: 'LiarGame AI',
     description: 'AI가 함께하는 라이어게임 — 링크 하나로 시작',

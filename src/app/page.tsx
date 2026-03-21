@@ -105,7 +105,7 @@ export default function HomePage() {
 
           {/* 텍스트 로고 — 이미지 교체 전 기본 표시 */}
           <div className="flex items-center justify-center gap-2.5 mb-2">
-            <span className="text-4xl" role="img" aria-label="가면">🎭</span>
+            <img src="/kitty-logo.png" alt="라이어" className="w-12 h-12 object-contain" />
             <h1 className="font-display text-4xl sm:text-5xl text-foreground">
               LiarGame
               <span className="text-primary"> AI</span>

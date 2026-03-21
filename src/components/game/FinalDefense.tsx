@@ -49,7 +49,7 @@ export default function FinalDefense() {
           isLiar ? 'border-red-500/40 bg-red-950/20' : 'border-border bg-card/50',
         )}
       >
-        <div className="text-5xl mb-3">{isLiar ? '🎭' : '⏳'}</div>
+        <div className="mb-3">{isLiar ? <img src="/kitty-logo.png" className="w-14 h-14 object-contain mx-auto" alt="라이어" /> : '⏳'}</div>
 
         {isLiar ? (
           <>

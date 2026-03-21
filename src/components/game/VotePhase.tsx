@@ -56,7 +56,7 @@ export default function VotePhase() {
       >
         {myRole === 'citizen'
           ? '🔍 라이어라고 생각하는 플레이어에게 투표하세요'
-          : '🎭 라이어 — 의심을 피하세요'}
+          : <><img src="/kitty-logo.png" className="inline w-4 h-4 object-contain" alt="" /> 라이어 — 의심을 피하세요</>}
       </div>
 
       {/* 설명 요약 */}

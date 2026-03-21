@@ -7,11 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Bot, RotateCcw, Skull } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { WinCondition } from '@/types/game';
 
-const WIN_INFO: Record<WinCondition, { label: string; emoji: string; citizenWins: boolean }> = {
+const WIN_INFO: Record<WinCondition, { label: string; emoji: ReactNode; citizenWins: boolean }> = {
   citizens_win: { label: '시민 승리', emoji: '🎉', citizenWins: true },
-  liar_wins: { label: '라이어 승리', emoji: '🎭', citizenWins: false },
+  liar_wins: { label: '라이어 승리', emoji: <img src="/kitty-logo.png" className="w-16 h-16 object-contain mx-auto" alt="라이어" />, citizenWins: false },
   fool_caught: { label: '바보 승리', emoji: '🤡', citizenWins: false },
   fool_missed: { label: '시민 승리', emoji: '🎉', citizenWins: true },
 };
@@ -84,8 +85,8 @@ export default function GameResult() {
           <Skull className="w-3 h-3" /> 라이어
         </p>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-xl">
-            🎭
+          <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+            <img src="/kitty-logo.png" className="w-6 h-6 object-contain" alt="라이어" />
           </div>
           <span className="font-semibold text-lg">{result.liarName}</span>
         </div>
@@ -109,7 +110,7 @@ export default function GameResult() {
                       )}
                     >
                       {v.targetName}
-                      {isLiarRow && ' 🎭'}
+                      {isLiarRow && <img src="/kitty-logo.png" className="inline w-4 h-4 object-contain ml-0.5" alt="" />}
                     </span>
                     <div className="flex-1 bg-muted/30 rounded-full h-2 overflow-hidden">
                       <div
@@ -145,7 +146,7 @@ export default function GameResult() {
                   isLiarPlayer ? 'border-red-500/30 bg-red-950/10' : 'border-border bg-card/50',
                 )}
               >
-                <div className="text-2xl mb-1">{isLiarPlayer ? '🎭' : '👁️'}</div>
+                <div className="mb-1">{isLiarPlayer ? <img src="/kitty-logo.png" className="w-8 h-8 object-contain mx-auto" alt="라이어" /> : '👁️'}</div>
                 <p className="text-sm font-semibold truncate">{player.name}</p>
                 <div className="flex items-center justify-center gap-1 mt-0.5 flex-wrap">
                   {isMe && (

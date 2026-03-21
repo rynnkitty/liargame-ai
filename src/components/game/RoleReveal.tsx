@@ -32,7 +32,7 @@ export default function RoleReveal() {
             : 'border-primary/40 bg-primary/5',
         )}
       >
-        <div className="text-6xl mb-4">{isLiar ? '🎭' : '👁️'}</div>
+        <div className="mb-4">{isLiar ? <img src="/kitty-logo.png" className="w-16 h-16 object-contain mx-auto" alt="라이어" /> : '👁️'}</div>
 
         <Badge
           className={cn(

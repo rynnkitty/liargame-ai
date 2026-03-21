@@ -220,7 +220,7 @@ export default function RoomPage() {
                 <span className="text-xs">홈</span>
               </Button>
               <span className="text-muted-foreground/40 text-xs">|</span>
-              <span className="text-lg" aria-hidden>🎭</span>
+              <img src="/kitty-logo.png" alt="" aria-hidden className="w-6 h-6 object-contain inline" />
               <span className="font-display font-bold text-sm">LiarGame AI</span>
             </div>
 

@@ -65,7 +65,7 @@ export default function DescriptionPhase() {
       )}
       {myRole === 'liar' && (
         <div className="rounded-lg border border-red-500/20 bg-red-950/10 px-3 py-2 text-sm">
-          <span className="text-red-400">🎭 라이어 — 다른 설명들을 분석해 그럴듯하게 설명하세요</span>
+          <span className="text-red-400"><img src="/kitty-logo.png" className="inline w-4 h-4 object-contain" alt="" /> 라이어 — 다른 설명들을 분석해 그럴듯하게 설명하세요</span>
         </div>
       )}
 

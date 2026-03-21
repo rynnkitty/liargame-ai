@@ -92,7 +92,7 @@ export default function GameSettings({ settings, onUpdate, isHost }: GameSetting
           {/* 요약 뱃지 */}
           <div className="flex items-center gap-1.5 mr-1">
             <Badge variant="outline" className="text-xs gap-1 hidden sm:flex">
-              {settings.mode === 'liar' ? '🎭 라이어' : '🃏 바보'}
+              {settings.mode === 'liar' ? <><img src="/kitty-logo.png" className="inline w-4 h-4 object-contain" alt="" /> 라이어</> : '🃏 바보'}
             </Badge>
             <Badge variant="outline" className="text-xs gap-1 hidden sm:flex">
               {currentCategory?.emoji} {currentCategory?.label}
@@ -119,7 +119,7 @@ export default function GameSettings({ settings, onUpdate, isHost }: GameSetting
               {[
                 {
                   value: 'liar',
-                  emoji: '🎭',
+                  emoji: <img src="/kitty-logo.png" className="w-6 h-6 object-contain" alt="라이어" />,
                   label: '라이어',
                   desc: '라이어를 찾아라',
                 },
@@ -142,7 +142,7 @@ export default function GameSettings({ settings, onUpdate, isHost }: GameSetting
                     !isHost && 'cursor-default',
                   )}
                 >
-                  <span className="text-xl">{mode.emoji}</span>
+                  <span className="flex items-center justify-center h-6">{mode.emoji}</span>
                   <span className="text-sm font-semibold">{mode.label}</span>
                   <span className="text-[10px]">{mode.desc}</span>
                 </button>

@@ -54,7 +54,7 @@ export default function DiscussionPhase() {
         >
           {myRole === 'citizen'
             ? `🔑 키워드: ${myKeyword} — 라이어의 의심스러운 설명을 찾아보세요`
-            : '🎭 라이어 — 자연스럽게 대화하며 의심을 피하세요'}
+            : <><img src="/kitty-logo.png" className="inline w-4 h-4 object-contain" alt="" /> 라이어 — 자연스럽게 대화하며 의심을 피하세요</>}
         </div>
       )}
 
