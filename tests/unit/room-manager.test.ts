@@ -41,7 +41,7 @@ describe('createRoom', () => {
     const room = createRoom('호스트');
     expect(room.settings.mode).toBe('liar');
     expect(room.settings.descriptionTimerSec).toBe(60);
-    expect(room.settings.discussionTimerSec).toBe(180);
+    expect(room.settings.discussionTimerSec).toBe(60);
     expect(room.settings.voteTimerSec).toBe(30);
     expect(room.settings.finalDefenseTimerSec).toBe(30);
   });
