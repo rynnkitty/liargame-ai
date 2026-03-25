@@ -26,20 +26,15 @@ jobs:
         run: npm run lint
 
   test:
-    name: Test (Node ${{ matrix.node-version }})
+    name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 20]
-      fail-fast: false
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
@@ -49,10 +44,9 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage report
-        if: matrix.node-version == 20
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-node${{ matrix.node-version }}
+          name: coverage-report
           path: coverage/
           retention-days: 7
 
@@ -87,16 +81,52 @@ jobs:
           retention-days: 3
 
   deploy:
-    name: Deploy (Manual)
-    runs-on: ubuntu-latest
+    name: Deploy to IIS
+    # Self-hosted runner가 IIS 서버에 설치되어야 합니다
+    # 설치 방법: https://docs.github.com/en/actions/hosting-your-own-runners
+    runs-on: [self-hosted, Windows, liargame-iis]
     needs: [build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
 
-      - name: Deploy notification
-        run: echo "Build artifact ready for IIS deployment. Download from Actions artifacts."
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci --omit=dev
+        shell: pwsh
+
+      - name: Build for production
+        run: npm run build
+        shell: pwsh
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+
+      - name: Deploy to IIS
+        run: |
+          .\iis\deploy.ps1 `
+            -SiteName   "${{ vars.IIS_SITE_NAME   || 'liargame-ai' }}" `
+            -DeployPath "${{ vars.IIS_DEPLOY_PATH  || 'C:\inetpub\liargame-ai' }}" `
+            -Port        ${{ vars.IIS_PORT          || 3000 }} `
+            -AppPoolName "${{ vars.IIS_APP_POOL    || 'liargame-ai-pool' }}"
+        shell: pwsh
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Notify deployment result
+        if: always()
+        run: |
+          $status = if ('${{ job.status }}' -eq 'success') { '✅ 배포 성공' } else { '❌ 배포 실패' }
+          Write-Host "$status — ${{ github.sha }} (${{ github.ref_name }})"
+          Write-Host "배포 시각: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+        shell: pwsh
