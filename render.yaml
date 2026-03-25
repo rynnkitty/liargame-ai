@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: liargame-ai
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: ANTHROPIC_API_KEY
+        sync: false
